@@ -1,0 +1,45 @@
+{
+	"name": "gooncodes",
+	"version": "0.0.0",
+	"description": "The coding agent that goons so you don't have to.",
+	"type": "module",
+	"bin": {
+		"goon": "dist/cli.js"
+	},
+	"files": [
+		"dist",
+		"themes"
+	],
+	"scripts": {
+		"build": "tsc -p tsconfig.build.json",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest --run",
+		"lint": "biome check ."
+	},
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/goon-codes/goon.git"
+	},
+	"homepage": "https://goon.codes",
+	"license": "MIT",
+	"keywords": [
+		"coding-agent",
+		"ai",
+		"cli",
+		"goon"
+	],
+	"dependencies": {
+		"@earendil-works/pi-coding-agent": "1.2.0",
+		"semver": "7.8.5"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.5.15",
+		"@types/node": "22.20.5",
+		"@types/semver": "7.8.0",
+		"typescript": "7.0.2",
+		"vitest": "5.0.4"
+	}
+}
