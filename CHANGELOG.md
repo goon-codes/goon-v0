@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3 (2026-10-14)
+
+- Windows installer offers to install Node 22 LTS via winget when Node is missing or too old
+
 ## 0.1.2 (2026-10-14)
 
 - Installer falls back to ~/.local (no sudo) when npm's global folder is root-owned, e.g. distro-packaged Node
