@@ -14,7 +14,8 @@
 		"build": "tsc -p tsconfig.build.json",
 		"typecheck": "tsc --noEmit",
 		"test": "vitest --run",
-		"lint": "biome check ."
+		"lint": "biome check .",
+		"pretest": "npm run build"
 	},
 	"engines": {
 		"node": ">=22.19.0"
@@ -37,6 +38,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.5.15",
+		"@earendil-works/pi-ai": "1.2.0",
 		"@types/node": "22.20.5",
 		"@types/semver": "7.8.0",
 		"typescript": "7.0.2",
