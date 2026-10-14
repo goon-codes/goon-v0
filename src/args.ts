@@ -1,8 +1,6 @@
 import { createRequire } from "node:module";
 
-export const VERSION: string = createRequire(import.meta.url)(
-	"../package.json",
-).version;
+export const VERSION: string = createRequire(import.meta.url)("../package.json").version;
 
 export function routeArgs(args: string[]): "version" | "update" | "pi" {
 	if (args[0] === "--version" || args[0] === "-v") return "version";
