@@ -1,4 +1,6 @@
+import { VERSION as PI_VERSION } from "@earendil-works/pi-coding-agent";
 import { describe, expect, it } from "vitest";
+import pkg from "../package.json" with { type: "json" };
 import { routeArgs, updateCommand, VERSION } from "../src/args.ts";
 
 describe("routeArgs", () => {
@@ -34,6 +36,7 @@ describe("updateCommand", () => {
 
 describe("VERSION", () => {
 	it("is our own package version, not Pi's", () => {
-		expect(VERSION).toBe("0.0.0");
+		expect(VERSION).toBe(pkg.version);
+		expect(VERSION).not.toBe(PI_VERSION);
 	});
 });

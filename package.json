@@ -1,6 +1,6 @@
 {
 	"name": "gooncodes",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"description": "The coding agent that goons so you don't have to.",
 	"type": "module",
 	"bin": {
