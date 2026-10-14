@@ -8,8 +8,6 @@ export function fakePi(mode: "tui" | "print" | "json" | "rpc" = "tui", themeName
 	const handlers = new Map<string, Handler>();
 	const commands = new Map<string, { handler: (args: string, ctx: any) => any }>();
 	const goonTheme = { name: "goon" };
-	// Pi registers extension themes only after session_start handlers return.
-	const state = { themesRegistered: false };
 	const ctx = {
 		mode,
 		hasUI: mode === "tui" || mode === "rpc",
@@ -20,7 +18,7 @@ export function fakePi(mode: "tui" | "print" | "json" | "rpc" = "tui", themeName
 			setTitle: vi.fn(),
 			setWorkingMessage: vi.fn(),
 			setTheme: vi.fn(() => ({ success: true })),
-			getTheme: vi.fn((name: string) => (name === "goon" && state.themesRegistered ? goonTheme : undefined)),
+			getTheme: vi.fn((name: string) => (name === "goon" ? goonTheme : undefined)),
 			notify: vi.fn(),
 		},
 	};
@@ -40,10 +38,9 @@ export function fakePi(mode: "tui" | "print" | "json" | "rpc" = "tui", themeName
 		ctx,
 		goonTheme,
 		emit: (event: string, payload: object = {}) => handlers.get(event)?.({ type: event, ...payload }, ctx),
-		// Mimics Pi's startup: session_start, then theme registration, then the event loop moves on.
+		// Runs session_start, then lets queued callbacks fire.
 		start: async () => {
 			await handlers.get("session_start")?.({ type: "session_start", reason: "startup" }, ctx);
-			state.themesRegistered = true;
 			await new Promise((resolve) => setTimeout(resolve, 0));
 		},
 		run: (command: string, args = "") => commands.get(command)?.handler(args, ctx),

@@ -1,11 +1,8 @@
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import { type ExtensionAPI, getAgentDir } from "@earendil-works/pi-coding-agent";
 import { VERSION } from "./args.ts";
 import { BANNER, DONE, HYPE, pick, TAGLINE, VOICE, WORKING } from "./copy.ts";
 import { checkForUpdate, fetchLatestVersion } from "./update.ts";
-
-const THEME_PATH = fileURLToPath(new URL("../themes/goon.json", import.meta.url));
 
 const realUpdateCheck = () =>
 	checkForUpdate({
@@ -18,8 +15,6 @@ const realUpdateCheck = () =>
 
 export default function goon(pi: ExtensionAPI, updateCheck: () => Promise<string | undefined> = realUpdateCheck): void {
 	let voice = true;
-
-	pi.on("resources_discover", () => ({ themePaths: [THEME_PATH] }));
 
 	pi.on("session_start", (_event, ctx) => {
 		if (ctx.mode !== "tui") return;
@@ -34,15 +29,6 @@ export default function goon(pi: ExtensionAPI, updateCheck: () => Promise<string
 			render: () => [...BANNER.split("\n").map((l) => theme.fg("accent", l)), theme.bold(TAGLINE), ""],
 			invalidate: () => {},
 		}));
-		// "system" is Pi's default, so the user hasn't picked a theme yet.
-		// shortcut: a user who explicitly picks "system" also gets goon, read settings.json if that bites.
-		if (ctx.ui.theme.name !== "system") return;
-		// Pi registers resources_discover themes right after session_start returns, so wait a tick.
-		setTimeout(() => {
-			const goonTheme = ctx.ui.getTheme("goon");
-			// Passing the Theme object (not the name) keeps it out of the user's saved settings.
-			if (goonTheme) ctx.ui.setTheme(goonTheme);
-		}, 0);
 	});
 
 	pi.on("before_agent_start", (event, ctx) => {

@@ -1,4 +1,3 @@
-import { existsSync } from "node:fs";
 import { describe, expect, it, vi } from "vitest";
 import { DONE, HYPE, VOICE, WORKING } from "../src/copy.ts";
 import goon from "../src/goon.ts";
@@ -70,25 +69,8 @@ describe("goon voice", () => {
 });
 
 describe("goon theme", () => {
-	it("ships a goon theme file via resource discovery", async () => {
+	it("leaves theming to Pi's --use-theme so it survives /new and /resume", async () => {
 		const f = setup("tui");
-		const result = await f.emit("resources_discover", {
-			cwd: ".",
-			reason: "startup",
-		});
-		expect(result.themePaths).toHaveLength(1);
-		expect(result.themePaths[0]).toMatch(/goon\.json$/);
-		expect(existsSync(result.themePaths[0])).toBe(true);
-	});
-
-	it("applies the goon theme when the user has not picked one", async () => {
-		const f = setup("tui", "system");
-		await f.start();
-		expect(f.ctx.ui.setTheme).toHaveBeenCalledWith(f.goonTheme);
-	});
-
-	it("leaves a user-picked theme alone", async () => {
-		const f = setup("tui", "dark");
 		await f.start();
 		expect(f.ctx.ui.setTheme).not.toHaveBeenCalled();
 	});
