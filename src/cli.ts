@@ -13,7 +13,7 @@ const route = routeArgs(args);
 if (route === "version") {
 	console.log(VERSION);
 } else if (route === "update") {
-	const { cmd, args: npmArgs, shell } = updateCommand(process.platform);
+	const { cmd, args: npmArgs, shell } = updateCommand(process.platform, fileURLToPath(new URL("..", import.meta.url)));
 	spawn(cmd, npmArgs, { stdio: "inherit", shell }).on("exit", (code) => process.exit(code ?? 1));
 } else {
 	// Pi's own update nag would point at Pi, not GoonCodes
