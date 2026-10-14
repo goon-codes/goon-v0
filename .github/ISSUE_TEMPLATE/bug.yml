@@ -1,0 +1,30 @@
+name: Bug report
+description: Something's broken in goon
+labels: [bug]
+body:
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: macOS 15, Ubuntu 24.04, Windows 11…
+    validations:
+      required: true
+  - type: input
+    id: node
+    attributes:
+      label: Node version (`node --version`)
+    validations:
+      required: true
+  - type: input
+    id: goon
+    attributes:
+      label: goon version (`goon --version`)
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: What did you do, what did you expect, what happened instead?
+    validations:
+      required: true
