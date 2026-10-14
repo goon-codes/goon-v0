@@ -1,12 +1,12 @@
 import { existsSync } from "node:fs";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { DONE, HYPE, VOICE, WORKING } from "../src/copy.ts";
 import goon from "../src/goon.ts";
 import { fakePi } from "./fake-pi.ts";
 
 function setup(...args: Parameters<typeof fakePi>) {
 	const f = fakePi(...args);
-	goon(f.api);
+	goon(f.api, async () => undefined);
 	return f;
 }
 
@@ -116,6 +116,25 @@ describe("/goon", () => {
 		await f.run("goon", "  ");
 		expect(f.pi.sendUserMessage).not.toHaveBeenCalled();
 		expect(f.ctx.ui.notify.mock.calls[0][0]).toContain("/goon <task>");
+	});
+});
+
+describe("update notice", () => {
+	it("shows the update notice in the TUI", async () => {
+		const f = fakePi("tui");
+		const update = vi.fn(async () => "new goon dropped (v9.9.9), run `goon update`");
+		goon(f.api, update);
+		await f.start();
+		expect(update).toHaveBeenCalledOnce();
+		expect(f.ctx.ui.notify).toHaveBeenCalledWith("new goon dropped (v9.9.9), run `goon update`", "info");
+	});
+
+	it("does not check for updates outside the TUI", async () => {
+		const f = fakePi("print");
+		const update = vi.fn(async () => "x");
+		goon(f.api, update);
+		await f.start();
+		expect(update).not.toHaveBeenCalled();
 	});
 });
 

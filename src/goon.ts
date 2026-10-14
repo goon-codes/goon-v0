@@ -1,16 +1,33 @@
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { type ExtensionAPI, getAgentDir } from "@earendil-works/pi-coding-agent";
+import { VERSION } from "./args.ts";
 import { BANNER, DONE, HYPE, pick, TAGLINE, VOICE, WORKING } from "./copy.ts";
+import { checkForUpdate, fetchLatestVersion } from "./update.ts";
 
 const THEME_PATH = fileURLToPath(new URL("../themes/goon.json", import.meta.url));
 
-export default function goon(pi: ExtensionAPI): void {
+const realUpdateCheck = () =>
+	checkForUpdate({
+		current: VERSION,
+		now: Date.now(),
+		statePath: join(getAgentDir(), "gooncodes-update.json"),
+		fetchLatest: fetchLatestVersion,
+		offline: !!process.env.PI_OFFLINE,
+	});
+
+export default function goon(pi: ExtensionAPI, updateCheck: () => Promise<string | undefined> = realUpdateCheck): void {
 	let voice = true;
 
 	pi.on("resources_discover", () => ({ themePaths: [THEME_PATH] }));
 
 	pi.on("session_start", (_event, ctx) => {
 		if (ctx.mode !== "tui") return;
+		// Fire and forget so a slow registry never delays startup.
+		updateCheck()
+			.then((notice) => notice && ctx.ui.notify(notice, "info"))
+			// ctx may be gone if the session ended first
+			.catch(() => {});
 		ctx.ui.setTitle("GoonCodes");
 		ctx.ui.setWorkingMessage(pick(WORKING));
 		ctx.ui.setHeader((_tui, theme) => ({
