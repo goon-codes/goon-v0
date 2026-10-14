@@ -1,5 +1,5 @@
 import { createRequire } from "node:module";
-import { basename, dirname, resolve } from "node:path";
+import { posix } from "node:path";
 
 export const VERSION: string = createRequire(import.meta.url)("../package.json").version;
 
@@ -16,7 +16,7 @@ export function updateCommand(
 	// npm is npm.cmd on Windows, which spawn only finds through a shell
 	if (platform === "win32") return { cmd: "npm", args: ["i", "-g", "gooncodes@latest"], shell: true };
 	// <prefix>/lib/node_modules/gooncodes: update in place, e.g. ~/.local when /usr isn't writable
-	const inPrefix = pkgDir && basename(dirname(pkgDir)) === "node_modules";
-	const prefix = inPrefix ? ["--prefix", resolve(pkgDir, "../../..")] : [];
+	const inPrefix = pkgDir && posix.basename(posix.dirname(pkgDir)) === "node_modules";
+	const prefix = inPrefix ? ["--prefix", posix.resolve(pkgDir, "../../..")] : [];
 	return { cmd: "npm", args: ["i", "-g", ...prefix, "gooncodes@latest"], shell: false };
 }
